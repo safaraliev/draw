@@ -2,8 +2,9 @@ import UIKit
 
 class DrawingView: UIView {
 
-    private var lines: [[CGPoint]] = [] // Массив для хранения всех линий
+    var lines: [(color: UIColor, points: [CGPoint])] = [] // Храним линии с цветами
     private var currentLine: [CGPoint] = []
+    var currentColor: UIColor = .red // Цвет по умолчанию
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
@@ -22,8 +23,8 @@ class DrawingView: UIView {
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        lines.append(currentLine) // Сохраняем линию
-        currentLine.removeAll() // Очищаем текущую линию
+        lines.append((color: currentColor, points: currentLine)) // Сохраняем линию с цветом
+        currentLine.removeAll()
         setNeedsDisplay()
     }
 
@@ -31,18 +32,17 @@ class DrawingView: UIView {
         guard let context = UIGraphicsGetCurrentContext() else { return }
 
         context.setLineWidth(5)
-        context.setStrokeColor(UIColor.red.cgColor)
         context.setLineCap(.round)
 
-        // Рисуем все сохраненные линии
-        for line in lines {
+        // Рисуем все сохраненные линии с их цветами
+        for (color, line) in lines {
+            context.setStrokeColor(color.cgColor)
             drawLine(line, in: context)
         }
         
         // Рисуем текущую линию (если есть)
+        context.setStrokeColor(currentColor.cgColor)
         drawLine(currentLine, in: context)
-        
-        context.strokePath()
     }
 
     private func drawLine(_ line: [CGPoint], in context: CGContext) {
@@ -52,5 +52,12 @@ class DrawingView: UIView {
         for point in line.dropFirst() {
             context.addLine(to: point)
         }
+        context.strokePath()
+    }
+    
+    func clearDrawing() {
+        lines.removeAll()
+        currentLine.removeAll()
+        setNeedsDisplay()
     }
 }
