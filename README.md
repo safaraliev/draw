@@ -3,7 +3,7 @@
 
 A simple drawing application that allows users to draw on the screen with different colors and clear the drawing with a button.
 
-![Drawing App Screenshot 1](/screenshot1.png)
+![Drawing App Screenshot 1](/Screenshot1.png)
 
 
 ## Features
